@@ -10,7 +10,7 @@ async function run() {
   }
 
   const octokit = github.getOctokit(token)
-  console.log(token, octokit, context)
+  // console.log(token, octokit, context)
   
   const { data: pullRequest } = await octokit.rest.pulls.get({
     owner: context.repo.owner,
