@@ -25,7 +25,7 @@ async function run() {
   });
 
   files.forEach(async file => {
-    console.log("source", await getFileContent(octokit, context.repo.owner, context.repo.repo, "main"))
+    console.log("source", await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, "main"))
     console.log("new", await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, pullRequest.head.ref));
   })
 
