@@ -1,7 +1,11 @@
-name: "my joke action"
+name: "consent action"
 
 description: "use an external API to retrieve and display a joke"
 
+inputs:
+  token:
+    description: "some token"
+    required: true
 outputs:
   joke-output:
     description: The resulting joke from the icanhazdadjokes API

@@ -1,8 +1,8 @@
 name: JS Actions
 
 on:
-  issues:
-    types: [labeled]
+  pull_request_review:
+    types: [submitted]
 
 jobs:
   action:
@@ -12,4 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: ha-ha
-        uses: ./.github/actions/joke-action
+        uses: ./.github/actions/consent
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
