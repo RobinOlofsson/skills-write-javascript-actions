@@ -31,7 +31,10 @@ async function run() {
     // const source = await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, "main")
     const current = await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, pullRequest.head.ref)
 
-    console.log(parser.parse(current));
+    const [currentTF, err] = parser.parse(current);
+    if (err) return
+    
+    console.log(JSON.stringify(currentTF))
   })
 
   console.log(pullRequest, files)
