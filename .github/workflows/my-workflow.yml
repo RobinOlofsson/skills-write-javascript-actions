@@ -5,35 +5,13 @@ on:
     types: [submitted]
 
 jobs:
-  check-iam:
+  action:
+    if: ${{ !github.event.repository.is_template }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-
-      - name: Run Terraform Plan
-        run: |
-          terraform init
-          terraform plan -detailed-exitcode -out=tfplan || echo "Terraform plan failed with non-zero exit code"
-
-      - name: Extract IAM Changes
-        id: extract-iam-changes
-        run: |
-          CHANGED_IAM=$(terraform show -json tfplan | jq '.resource_changes[] | select(.change.actions[] == "create" and .type | contains("google_project_iam_binding")) | .change.after.members[]' | tr -d '"')
-          echo "::set-output name=changed_iam::$CHANGED_IAM"
-
-      - name: Comment on PR if IAM Change
-        if: ${{ steps.extract-iam-changes.outputs.changed_iam != null }}
-        uses: actions/github-script@v5
+      - uses: actions/checkout@v4
+      - name: ha-ha
+        uses: ./.github/actions/consent
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const changedIam = "${{ steps.extract-iam-changes.outputs.changed_iam }}";
-            const prNumber = context.payload.pull_request.number;
-            const repo = context.repo.owner + '/' + context.repo.repo;
-            const commentBody = `New IAM member detected: \`${changedIam}\``;
-            github.issues.createComment({ issue_number: prNumber, owner: context.repo.owner, repo: context.repo.repo, body: commentBody });
+          token: ${{ secrets.GITHUB_TOKEN }}

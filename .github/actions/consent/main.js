@@ -10,7 +10,7 @@ async function run() {
   }
 
   const octokit = github.getOctokit(token)
-  console.log(token, octokit)
+  console.log(token, octokit, context)
 
   const { data: pullRequest } = await octokit.rest.pulls.listFiles({
     owner: context.repo.owner,
@@ -18,7 +18,29 @@ async function run() {
     pull_number: context.payload.pull_request.number,
   });
 
+  pullRequest.forEach(file => {
+    console.log("source", getFileContent(context.repo.owner, context.repo.repo, "main"))
+    console.log("new", getFileContent(context.repo.owner, context.repo.repo, file.filename, context.payload.pull_request.ref));
+  })
+
   console.log(pullRequest)
+}
+
+async function getFileContent(owner, repo, path, ref) {
+  const octokit = new Octokit();
+
+  const response = await octokit.rest.repos.getContent({
+    owner,
+    repo,
+    path,
+    ref,
+  });
+
+  if (response.data?.content) {
+    return Buffer.from(response.data.content, 'base64').toString('utf-8');
+  }
+
+  return null;
 }
 
 run();
