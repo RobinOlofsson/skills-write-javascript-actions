@@ -1,5 +1,6 @@
 const core = require("@actions/core");
 const github = require('@actions/github');
+import {parse} from "hcl-parser"
 
 async function run() {
   const token = core.getInput('token', { required: true });
@@ -25,8 +26,12 @@ async function run() {
   });
 
   files.forEach(async file => {
-    console.log("source", await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, "main"))
-    console.log("new", await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, pullRequest.head.ref));
+    if (!file.filename.endsWith(".tf")) return
+
+    // const source = await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, "main")
+    const current = await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, pullRequest.head.ref)
+
+    console.log(parse(current));
   })
 
   console.log(pullRequest, files)
