@@ -25,16 +25,14 @@ async function run() {
   });
 
   files.forEach(file => {
-    console.log("source", getFileContent(context.repo.owner, context.repo.repo, "main"))
-    console.log("new", getFileContent(context.repo.owner, context.repo.repo, file.filename, pullRequest.head.ref));
+    console.log("source", getFileContent(octokit, context.repo.owner, context.repo.repo, "main"))
+    console.log("new", getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, pullRequest.head.ref));
   })
 
   console.log(pullRequest, files)
 }
 
-async function getFileContent(owner, repo, path, ref) {
-  const octokit = new Octokit();
-
+async function getFileContent(octokit, owner, repo, path, ref) {
   const response = await octokit.rest.repos.getContent({
     owner,
     repo,
