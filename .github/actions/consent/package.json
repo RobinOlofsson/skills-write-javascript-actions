@@ -12,6 +12,7 @@
   "dependencies": {
     "@actions/core": "^1.10.1",
     "@actions/github": "^6.0.0",
+    "hcl-parser": "^0.1.1",
     "request": "^2.88.2",
     "request-promise": "^4.2.6"
   }

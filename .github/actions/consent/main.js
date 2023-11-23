@@ -1,5 +1,6 @@
 const core = require("@actions/core");
 const github = require('@actions/github');
+const parser = require("hcl-parser")
 
 async function run() {
   const token = core.getInput('token', { required: true });
@@ -10,14 +11,48 @@ async function run() {
   }
 
   const octokit = github.getOctokit(token)
+  // console.log(token, octokit, context)
   
-  console.log(octokit.pulls.listReviews({
+  const { data: pullRequest } = await octokit.rest.pulls.get({
     owner: context.repo.owner,
     repo: context.repo.repo,
     pull_number: context.payload.pull_request.number,
-    page: 1,
-  }));
+  });
 
+  const { data: files } = await octokit.rest.pulls.listFiles({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    pull_number: context.payload.pull_request.number,
+  });
+
+  files.forEach(async file => {
+    if (!file.filename.endsWith(".tf")) return
+
+    // const source = await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, "main")
+    const current = await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, pullRequest.head.ref)
+
+    const [currentTF, err] = parser.parse(current);
+    if (err) return
+    
+    console.log(JSON.stringify(currentTF))
+  })
+
+  console.log(pullRequest, files)
+}
+
+async function getFileContent(octokit, owner, repo, path, ref) {
+  const response = await octokit.rest.repos.getContent({
+    owner,
+    repo,
+    path,
+    ref,
+  });
+
+  if (response.data?.content) {
+    return Buffer.from(response.data.content, 'base64').toString('utf-8');
+  }
+
+  return null;
 }
 
 run();
