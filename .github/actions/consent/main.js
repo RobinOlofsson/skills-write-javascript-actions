@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 const github = require('@actions/github');
-import {parse} from "hcl-parser"
+const parser = require("hcl-parser")
 
 async function run() {
   const token = core.getInput('token', { required: true });
@@ -31,7 +31,7 @@ async function run() {
     // const source = await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, "main")
     const current = await getFileContent(octokit, context.repo.owner, context.repo.repo, file.filename, pullRequest.head.ref)
 
-    console.log(parse(current));
+    console.log(parser.parse(current));
   })
 
   console.log(pullRequest, files)
