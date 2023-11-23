@@ -3,6 +3,6 @@ resource "google_project_iam_binding" "project" {
   role    = "roles/cloudsql.instanceUser"
 
   members = [
-    "user:jane@example.com",
+    "user:janes@example.com",
   ]
 }
