@@ -1,9 +1,4 @@
-terraform {
-
-}
-
-resource "null_resource" "example" {
-  provisioner "local-exec" {
-    command = "echo This command will execute whenever the configuration changes"
-  }
+resource "local_file" "test" {
+  filename = "README.md"
+  content  = "Hello world!"
 }
