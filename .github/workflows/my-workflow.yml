@@ -14,4 +14,6 @@ jobs:
       pull-requests: write # Required to add PR comment and label.
 
     steps:
+      - uses: actions/checkout@v4
+      - uses: opentofu/setup-opentofu@v1
       - uses: RobinOlofsson/terraflow@main
